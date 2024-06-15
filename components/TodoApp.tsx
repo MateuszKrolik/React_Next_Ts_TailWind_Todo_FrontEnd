@@ -1,3 +1,6 @@
+'use client';
+import { ChangeEvent, useState } from 'react';
+
 export default function TodoApp() {
   return (
     <div>
@@ -8,6 +11,19 @@ export default function TodoApp() {
 }
 
 function LoginComponent() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  function handleUsernameChange(event: ChangeEvent<HTMLInputElement>): void {
+    console.log(event.target.value);
+    setUsername(event.target.value);
+  }
+
+  function handlePasswordChange(event: ChangeEvent<HTMLInputElement>): void {
+    console.log(event.target.value);
+    setPassword(event.target.value);
+  }
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
@@ -23,7 +39,8 @@ function LoginComponent() {
               <input
                 type="username"
                 name="username"
-                defaultValue="Mateusz"
+                value={username}
+                onChange={handleUsernameChange}
                 placeholder="Username"
                 className="input input-bordered"
                 required
@@ -36,6 +53,8 @@ function LoginComponent() {
               <input
                 type="password"
                 name="password"
+                value={password}
+                onChange={handlePasswordChange}
                 placeholder="Password"
                 className="input input-bordered"
                 required
