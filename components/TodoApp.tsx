@@ -1,5 +1,7 @@
 'use client';
-import { ChangeEvent, useState } from 'react';
+import { MouseEvent, ChangeEvent, useState } from 'react';
+import SuccessMessageComponent from '@/components/SuccessMessageComponent';
+import ErrorMessageComponent from '@/components/ErrorMessageComponent';
 
 export default function TodoApp() {
   return (
@@ -14,14 +16,26 @@ function LoginComponent() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+
   function handleUsernameChange(event: ChangeEvent<HTMLInputElement>): void {
-    console.log(event.target.value);
     setUsername(event.target.value);
   }
 
   function handlePasswordChange(event: ChangeEvent<HTMLInputElement>): void {
-    console.log(event.target.value);
     setPassword(event.target.value);
+  }
+
+  function handleSubmit(event: MouseEvent<HTMLButtonElement>): void {
+    event.preventDefault();
+    if (username === 'mateusz' && password === 'dummy') {
+      setShowSuccessMessage(true);
+      setShowErrorMessage(false);
+    } else {
+      setShowErrorMessage(true);
+      setShowSuccessMessage(false);
+    }
   }
 
   return (
@@ -30,6 +44,8 @@ function LoginComponent() {
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold">Login now!</h1>
         </div>
+        <SuccessMessageComponent showSuccessMessage={showSuccessMessage} />
+        <ErrorMessageComponent showErrorMessage={showErrorMessage} />
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form className="card-body">
             <div className="form-control">
@@ -61,7 +77,12 @@ function LoginComponent() {
               />
             </div>
             <div className="form-control mt-6">
-              <button type="button" name="login" className="btn btn-primary">
+              <button
+                type="button"
+                name="login"
+                onClick={handleSubmit}
+                className="btn btn-primary"
+              >
                 Login
               </button>
             </div>
