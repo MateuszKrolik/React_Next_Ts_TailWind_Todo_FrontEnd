@@ -1,5 +1,5 @@
 'use client';
-import { MouseEvent, ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
@@ -21,12 +21,12 @@ export default function LoginComponent() {
     setPassword(event.target.value);
   }
 
-  function handleSubmit(event: MouseEvent<HTMLButtonElement>): void {
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (username === 'mateusz' && password === 'dummy') {
       setShowSuccessMessage(true);
       setShowErrorMessage(false);
-      router.push('/welcome');
+      router.push(`/welcome/${username}`);
     } else {
       setShowErrorMessage(true);
       setShowSuccessMessage(false);
@@ -42,7 +42,7 @@ export default function LoginComponent() {
         <SuccessMessageComponent showSuccessMessage={showSuccessMessage} />
         <ErrorMessageComponent showErrorMessage={showErrorMessage} />
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <form className="card-body">
+          <form onSubmit={handleSubmit} className="card-body">
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Username</span>
@@ -73,9 +73,9 @@ export default function LoginComponent() {
             </div>
             <div className="form-control mt-6">
               <button
-                type="button"
+                type="submit"
                 name="login"
-                onClick={handleSubmit}
+                // onClick={handleSubmit}
                 className="btn btn-primary"
               >
                 Login
