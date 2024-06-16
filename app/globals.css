@@ -30,4 +30,7 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .centered {
+    @apply flex flex-col items-center justify-center h-screen;
+  }
 }

@@ -1,4 +1,5 @@
 // '@/app/welcome/[username]/page.tsx
+import Link from 'next/link';
 
 interface WelcomeComponentProps {
   params?: {
@@ -8,9 +9,13 @@ interface WelcomeComponentProps {
 
 export default function WelcomeComponent({ params }: WelcomeComponentProps) {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="centered">
       <h1>Welcome {params?.username}</h1>
-      <div>Welcome Component</div>
+      <div>
+        <Link className="link link-primary" href="/todos">
+          Manage your todos!
+        </Link>
+      </div>
     </div>
   );
 }
