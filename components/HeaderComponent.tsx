@@ -1,8 +1,14 @@
 // '@/components/HeaderComponent.tsx}
 
-export default function HeaderComponent() {
+import Link from 'next/link';
+
+export default function HeaderComponent({
+  params,
+}: {
+  params: { username: string };
+}) {
   return (
-    <div className="navbar bg-primary">
+    <div className="navbar bg-primary sticky top-0">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -26,28 +32,37 @@ export default function HeaderComponent() {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a>Home</a>
+              <Link href={`/welcome/${params?.username}`}>Home</Link>
             </li>
             <li>
-              <a>Todos</a>
+              <Link href="/todos">Todos</Link>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">MK Todos</a>
+        <Link
+          href={`/welcome/${params?.username}`}
+          className="btn btn-ghost text-xl"
+        >
+          MK Todos
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Home</a>
+            <Link href={`/welcome/${params?.username}`}>Home</Link>
           </li>
           <li>
-            <a>Todos</a>
+            <Link href="/todos">Todos</Link>
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn btn-ghost">Login</a>
-        <a className="btn btn-ghost">Logout</a>
+        <Link href="/login" className="btn btn-ghost">
+          Login
+        </Link>
+        <Link href="/logout" className="btn btn-ghost">
+          Logout
+        </Link>
       </div>
     </div>
   );
