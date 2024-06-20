@@ -3,9 +3,11 @@ import { ChangeEvent, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
+import { useAuth } from '@/components/security/AuthContext';
 
 export default function LoginComponent() {
   const router = useRouter();
+  const authContext = useAuth();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -24,10 +26,12 @@ export default function LoginComponent() {
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (username === 'mateusz' && password === 'dummy') {
+      authContext.setIsAuthenticated(true);
       setShowSuccessMessage(true);
       setShowErrorMessage(false);
       router.push(`/welcome/${username}`);
     } else {
+      authContext.setIsAuthenticated(false);
       setShowErrorMessage(true);
       setShowSuccessMessage(false);
     }

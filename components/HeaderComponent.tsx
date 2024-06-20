@@ -1,12 +1,22 @@
 // '@/components/HeaderComponent.tsx}
+'use client';
 
 import Link from 'next/link';
+import { useAuth } from './security/AuthContext';
 
 export default function HeaderComponent({
   params,
 }: {
-  params: { username: string };
+  params?: { username: string };
 }) {
+  const authContext = useAuth();
+  const isAuthenticated = authContext.isAuthenticated;
+
+  function logout() {
+    authContext.setIsAuthenticated(false);
+  }
+
+  // console.log(authContext);
   return (
     <div className="navbar bg-primary sticky top-0">
       <div className="navbar-start">
@@ -32,15 +42,19 @@ export default function HeaderComponent({
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <Link href={`/welcome/${params?.username}`}>Home</Link>
+              {isAuthenticated && (
+                <Link href={`/welcome/${params?.username}`}>Home</Link>
+              )}
             </li>
             <li>
-              <Link href="/todos">Todos</Link>
+              {isAuthenticated && (
+                <Link href={`/welcome/${params?.username}`}>Todos</Link>
+              )}
             </li>
           </ul>
         </div>
         <Link
-          href={`/welcome/${params?.username}`}
+          href={isAuthenticated ? `/welcome/${params?.username}` : '/login'}
           className="btn btn-ghost text-xl"
         >
           MK Todos
@@ -49,20 +63,28 @@ export default function HeaderComponent({
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <Link href={`/welcome/${params?.username}`}>Home</Link>
+            {isAuthenticated && (
+              <Link href={`/welcome/${params?.username}`}>Home</Link>
+            )}
           </li>
           <li>
-            <Link href="/todos">Todos</Link>
+            {isAuthenticated && (
+              <Link href={`/welcome/${params?.username}`}>Todos</Link>
+            )}
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href="/login" className="btn btn-ghost">
-          Login
-        </Link>
-        <Link href="/logout" className="btn btn-ghost">
-          Logout
-        </Link>
+        {!isAuthenticated && (
+          <Link href="/login" className="btn btn-ghost">
+            Login
+          </Link>
+        )}
+        {isAuthenticated && (
+          <Link href="/logout" className="btn btn-ghost" onClick={logout}>
+            Logout
+          </Link>
+        )}
       </div>
     </div>
   );
