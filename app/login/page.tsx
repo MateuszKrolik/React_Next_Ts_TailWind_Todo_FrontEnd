@@ -25,13 +25,11 @@ export default function LoginComponent() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (username === 'mateusz' && password === 'dummy') {
-      authContext.setIsAuthenticated(true);
+    if (authContext.login(username, password)) {
       setShowSuccessMessage(true);
       setShowErrorMessage(false);
       router.push(`/welcome/${username}`);
     } else {
-      authContext.setIsAuthenticated(false);
       setShowErrorMessage(true);
       setShowSuccessMessage(false);
     }
