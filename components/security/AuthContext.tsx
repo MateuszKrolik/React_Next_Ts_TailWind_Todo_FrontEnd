@@ -3,13 +3,14 @@ import {
   createContext,
   ReactNode,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (username: string, password: string) => boolean;
-  logout: () => void;
+  logout: () => boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -34,13 +35,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
-    setIsAuthenticated(false);
+    useEffect(() => {
+      setIsAuthenticated(false);
+    }, []);
+
+    return true;
   }
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

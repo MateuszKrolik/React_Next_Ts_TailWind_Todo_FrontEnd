@@ -16,7 +16,6 @@ export default function HeaderComponent({
     authContext.logout();
   }
 
-  // console.log(authContext);
   return (
     <div className="navbar bg-primary sticky top-0">
       <div className="navbar-start">
