@@ -1,19 +1,22 @@
 'use client';
-import { ChangeEvent, useState, FormEvent } from 'react';
+import { ChangeEvent, useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
-import { useAuth } from '@/components/security/AuthContext';
+import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { authActions } from '@/redux/authSlice';
 
 export default function LoginComponent() {
   const router = useRouter();
-  const authContext = useAuth();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+  const error = useSelector((state: RootState) => state.auth.error);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
 
   function handleUsernameChange(event: ChangeEvent<HTMLInputElement>): void {
     setUsername(event.target.value);
@@ -25,15 +28,14 @@ export default function LoginComponent() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (authContext.login(username, password)) {
-      setShowSuccessMessage(true);
-      setShowErrorMessage(false);
-      router.push(`/welcome/${username}`);
-    } else {
-      setShowErrorMessage(true);
-      setShowSuccessMessage(false);
-    }
+    dispatch(authActions.login({ username, password }));
   }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(`/welcome/${username}`);
+    }
+  }, [isAuthenticated, username, router]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -41,8 +43,10 @@ export default function LoginComponent() {
         <div className="text-center">
           <h1 className="text-5xl font-bold">Login now!</h1>
         </div>
-        <SuccessMessageComponent showSuccessMessage={showSuccessMessage} />
-        <ErrorMessageComponent showErrorMessage={showErrorMessage} />
+        {isAuthenticated && (
+          <SuccessMessageComponent showSuccessMessage={true} />
+        )}
+        {error && <ErrorMessageComponent showErrorMessage={true} />}
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form onSubmit={handleSubmit} className="card-body">
             <div className="form-control">
@@ -74,12 +78,7 @@ export default function LoginComponent() {
               />
             </div>
             <div className="form-control mt-6">
-              <button
-                type="submit"
-                name="login"
-                // onClick={handleSubmit}
-                className="btn btn-primary"
-              >
+              <button type="submit" name="login" className="btn btn-primary">
                 Login
               </button>
             </div>

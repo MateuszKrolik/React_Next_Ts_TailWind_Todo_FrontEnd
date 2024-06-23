@@ -1,16 +1,18 @@
 'use client';
 import { ReactNode } from 'react';
-import { useAuth } from './AuthContext';
 import { redirect } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export default function AuthenticatedRoute({
   children,
 }: {
   children: ReactNode;
 }) {
-  const authContext = useAuth();
-
-  if (authContext.isAuthenticated) {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+  if (isAuthenticated) {
     return children;
   } else {
     redirect('/login');
