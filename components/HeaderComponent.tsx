@@ -1,25 +1,27 @@
 // '@/components/HeaderComponent.tsx}
 'use client';
-import { MouseEvent } from 'react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { authActions } from '@/redux/authSlice';
+import { useRouter } from 'next/navigation';
 
 export default function HeaderComponent({
   params,
 }: {
   params?: { username: string };
 }) {
-  const dispatch = useDispatch(); 
+  const router = useRouter();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
 
-  function logout(event: MouseEvent<HTMLButtonElement>) {
-    event.preventDefault();
+  function logout() {
     dispatch(authActions.logout());
-    window.location.href = '/logout'; // causes full page reload ;/
+    setTimeout(() => {
+      router.push('/logout');
+    }, 0);
   }
 
   return (
@@ -80,15 +82,14 @@ export default function HeaderComponent({
         </ul>
       </div>
       <div className="navbar-end">
-        {!isAuthenticated && (
-          <Link href="/login" className="btn btn-ghost">
-            Login
-          </Link>
-        )}
-        {isAuthenticated && (
+        {isAuthenticated ? (
           <button className="btn btn-ghost" onClick={logout}>
             LogOut
           </button>
+        ) : (
+          <Link href="/login" className="btn btn-ghost">
+            Login
+          </Link>
         )}
       </div>
     </div>
