@@ -1,7 +1,7 @@
 // @/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
-import { todoApi } from './api'; // Import your todoApi
+import { todoApi } from './api'; 
 
 const store = configureStore({
   reducer: {
@@ -15,3 +15,4 @@ const store = configureStore({
 export default store;
 
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

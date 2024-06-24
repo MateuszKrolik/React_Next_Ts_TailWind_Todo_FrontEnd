@@ -1,9 +1,10 @@
 // '@/components/HeaderComponent.tsx}
 'use client';
 import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { authActions } from '@/redux/authSlice';
+
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+
+import { logoutAsync } from '@/redux/authSlice';
 import { useRouter } from 'next/navigation';
 
 export default function HeaderComponent({
@@ -12,17 +13,13 @@ export default function HeaderComponent({
   params?: { username: string };
 }) {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
-  function logout() {
-    dispatch(authActions.logout());
-    setTimeout(() => {
-      router.push('/logout');
-    }, 0);
-  }
+  const logout = async () => {
+    await dispatch(logoutAsync()).unwrap(); // ".unwrap()" to await completion
+    router.push('/logout');
+  };
 
   return (
     <div className="navbar bg-primary sticky top-0">

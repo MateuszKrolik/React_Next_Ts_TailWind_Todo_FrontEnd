@@ -3,17 +3,14 @@ import { ChangeEvent, useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
-import { RootState } from '@/redux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { authActions } from '@/redux/authSlice';
 
 export default function LoginComponent() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
-  const error = useSelector((state: RootState) => state.auth.error);
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const error = useAppSelector((state) => state.auth.error);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

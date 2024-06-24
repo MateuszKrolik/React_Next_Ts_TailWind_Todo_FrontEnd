@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const initialAuthState = { isAuthenticated: false, error: false };
 
@@ -22,6 +22,13 @@ const authSlice = createSlice({
     },
   },
 });
+
+export const logoutAsync = createAsyncThunk(
+  'auth/logoutAsync',
+  (_, { dispatch }) => {
+    dispatch(authActions.logout());
+  }
+);
 
 export const authActions = authSlice.actions;
 
