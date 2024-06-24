@@ -12,8 +12,8 @@ export default function LoginComponent() {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const error = useAppSelector((state) => state.auth.error);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('mateusz');
+  const [password, setPassword] = useState('dummy');
 
   function handleUsernameChange(event: ChangeEvent<HTMLInputElement>): void {
     setUsername(event.target.value);

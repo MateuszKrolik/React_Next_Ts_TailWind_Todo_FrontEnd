@@ -1,18 +1,16 @@
 // '@/app/welcome/[username]/page.tsx
+'use client';
 import AuthenticatedRoute from '@/components/security/AuthenticatedRoute';
+import { useAppSelector } from '@/redux/hooks';
 import Link from 'next/link';
 
-interface WelcomeComponentProps {
-  params?: {
-    username: string;
-  };
-}
+function WelcomeComponent() {
+  const username = useAppSelector((state) => state.auth.username);
 
-function WelcomeComponent({ params }: WelcomeComponentProps) {
   return (
     <AuthenticatedRoute>
       <div className="centered">
-        <h1>Welcome {params?.username}</h1>
+        <h1>Welcome {username}</h1>
         <div>
           <Link className="link link-primary" href="/todos">
             Manage your todos!

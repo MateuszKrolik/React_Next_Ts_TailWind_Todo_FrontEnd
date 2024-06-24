@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const initialAuthState = { isAuthenticated: false, error: false };
+const initialAuthState = { isAuthenticated: false, error: false, username: '' };
 
 const authSlice = createSlice({
   name: 'auth',
@@ -12,6 +12,7 @@ const authSlice = createSlice({
       if (username === 'mateusz' && password === 'dummy') {
         state.isAuthenticated = true;
         state.error = false;
+        state.username = username; 
       } else {
         state.isAuthenticated = false;
         state.error = true;
@@ -19,6 +20,10 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.isAuthenticated = false;
+      state.username = ''; 
+    },
+    setUsername(state, action) {
+      state.username = action.payload;
     },
   },
 });

@@ -7,14 +7,11 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { logoutAsync } from '@/redux/authSlice';
 import { useRouter } from 'next/navigation';
 
-export default function HeaderComponent({
-  params,
-}: {
-  params?: { username: string };
-}) {
+export default function HeaderComponent() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const username = useAppSelector((state) => state.auth.username);
 
   const logout = async () => {
     await dispatch(logoutAsync()).unwrap(); // ".unwrap()" to await completion
@@ -47,18 +44,14 @@ export default function HeaderComponent({
           >
             <li>
               {isAuthenticated && (
-                <Link href={`/welcome/${params?.username}`}>Home</Link>
+                <Link href={`/welcome/${username}`}>Home</Link>
               )}
             </li>
-            <li>
-              {isAuthenticated && (
-                <Link href={`/welcome/${params?.username}`}>Todos</Link>
-              )}
-            </li>
+            <li>{isAuthenticated && <Link href={`/todos`}>Todos</Link>}</li>
           </ul>
         </div>
         <Link
-          href={isAuthenticated ? `/welcome/${params?.username}` : '/login'}
+          href={isAuthenticated ? `/welcome/${username}` : '/login'}
           className="btn btn-ghost text-xl"
         >
           MK Todos
@@ -67,13 +60,11 @@ export default function HeaderComponent({
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            {isAuthenticated && (
-              <Link href={`/welcome/${params?.username}`}>Home</Link>
-            )}
+            {isAuthenticated && <Link href={`/welcome/${username}`}>Home</Link>}
           </li>
           <li>
             {isAuthenticated && (
-              <Link href={`/welcome/${params?.username}`}>Todos</Link>
+              <Link href={`/welcome/${username}`}>Todos</Link>
             )}
           </li>
         </ul>
