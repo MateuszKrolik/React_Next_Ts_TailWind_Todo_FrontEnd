@@ -4,7 +4,7 @@ export interface Todo {
   id: number;
   username: string;
   description: string;
-  targetDate: Date;
+  targetDate: string;
   done: boolean;
 }
 
@@ -17,11 +17,28 @@ export const todoApi = createApi({
       query: (username) => `/v1/users/${username}/todos`,
       providesTags: [{ type: 'Todos', id: 'LIST' }],
     }),
+    retrieveOneTodoForUsername: builder.query<
+      Todo,
+      { id: number; username: string }
+    >({
+      query: ({ id, username }) => `/v1/users/${username}/todos/${id}`,
+      providesTags: [{ type: 'Todos', id: 'LIST' }],
+    }),
     deleteOneTodoForUsername: builder.mutation<Todo, Todo>({
       query(todo) {
         return {
           url: `/v1/users/${todo.username}/todos/${todo.id}`,
           method: 'DELETE',
+          body: todo,
+        };
+      },
+      invalidatesTags: [{ type: 'Todos', id: 'LIST' }], // automatically re-run query and update page
+    }),
+    updateOneTodoForUsername: builder.mutation<Todo, Todo>({
+      query(todo) {
+        return {
+          url: `/v1/users/${todo.username}/todos/${todo.id}`,
+          method: 'PUT',
           body: todo,
         };
       },

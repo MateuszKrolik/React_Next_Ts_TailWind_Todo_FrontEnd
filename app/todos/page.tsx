@@ -1,11 +1,14 @@
 'use client';
 import AuthenticatedRoute from '@/components/security/AuthenticatedRoute';
 import { todoApi, Todo } from '@/redux/api';
+import { useAppSelector } from '@/redux/hooks';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 export default function ListTodos() {
-  const { data: todos } =
-    todoApi.useRetrieveAllTodosForUsernameQuery('mateusz');
+  const router = useRouter();
+  const username = useAppSelector((state) => state.auth.username);
+  const { data: todos } = todoApi.useRetrieveAllTodosForUsernameQuery(username);
   const [deleteOneTodoForUsername] =
     todoApi.useDeleteOneTodoForUsernameMutation();
   const [message, setMessage] = useState<string | null>(null);
@@ -17,12 +20,15 @@ export default function ListTodos() {
         setMessage(`Deletion of todo with id: ${todo.id} successful`);
       } catch (error) {
         const errorMessage = (error as Error).message;
-        setMessage(`Error: ${errorMessage}`);
+        setMessage(`Delete error for todo of id: ${todo.id} ${errorMessage}`);
       }
     },
     [deleteOneTodoForUsername]
   );
 
+  const updateTodo = (todo: Todo) => {
+    router.push(`/todo/${todo.id}`);
+  };
   return (
     <AuthenticatedRoute>
       <div className="centered">
@@ -41,6 +47,7 @@ export default function ListTodos() {
                 <th>done</th>
                 <th>targetDate</th>
                 <th>delete</th>
+                <th>update</th>
               </tr>
             </thead>
             <tbody>
@@ -56,6 +63,14 @@ export default function ListTodos() {
                       onClick={() => onDelete(todo)}
                     >
                       delete
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => updateTodo(todo)}
+                    >
+                      update
                     </button>
                   </td>
                 </tr>
