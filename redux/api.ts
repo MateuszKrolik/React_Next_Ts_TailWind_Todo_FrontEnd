@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface Todo {
-  id: number;
+  id?: number; // auto-increment in db, so don't have to specify
   username: string;
   description: string;
   targetDate: string;
@@ -39,6 +39,16 @@ export const todoApi = createApi({
         return {
           url: `/v1/users/${todo.username}/todos/${todo.id}`,
           method: 'PUT',
+          body: todo,
+        };
+      },
+      invalidatesTags: [{ type: 'Todos', id: 'LIST' }], // automatically re-run query and update page
+    }),
+    addOneTodoForUsername: builder.mutation<Todo, Todo>({
+      query(todo) {
+        return {
+          url: `/v1/users/${todo.username}/todos`,
+          method: 'POST',
           body: todo,
         };
       },

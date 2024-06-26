@@ -29,6 +29,11 @@ export default function ListTodos() {
   const updateTodo = (todo: Todo) => {
     router.push(`/todo/${todo.id}`);
   };
+  
+  function addNewTodo() {
+    router.push(`/add-todo`);
+  }
+
   return (
     <AuthenticatedRoute>
       <div className="centered">
@@ -78,6 +83,7 @@ export default function ListTodos() {
             </tbody>
           </table>
         </div>
+        <button onClick={addNewTodo} className="btn btn-secondary m-5">add new todo</button>
       </div>
     </AuthenticatedRoute>
   );
