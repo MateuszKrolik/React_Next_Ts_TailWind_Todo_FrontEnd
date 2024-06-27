@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { authActions } from '@/redux/authSlice';
+import { loginAsync } from '@/redux/authSlice';
 
 export default function LoginComponent() {
   const router = useRouter();
@@ -12,27 +12,35 @@ export default function LoginComponent() {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const error = useAppSelector((state) => state.auth.error);
 
-  const [username, setUsername] = useState('mateusz');
-  const [password, setPassword] = useState('dummy');
+  const [formState, setFormState] = useState<{
+    username: string;
+    password: string;
+  }>({
+    username: 'mateusz',
+    password: 'dummy',
+  });
 
-  function handleUsernameChange(event: ChangeEvent<HTMLInputElement>): void {
-    setUsername(event.target.value);
-  }
+  const handleChange = ({
+    target: { name, value },
+  }: ChangeEvent<HTMLInputElement>) =>
+    setFormState((prev) => ({ ...prev, [name]: value }));
 
-  function handlePasswordChange(event: ChangeEvent<HTMLInputElement>): void {
-    setPassword(event.target.value);
-  }
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(authActions.login({ username, password }));
-  }
+    try {
+      await dispatch(loginAsync(formState)).unwrap();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
+    }
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(`/welcome/${username}`);
+      router.push(`/welcome/${formState.username}`);
     }
-  }, [isAuthenticated, username, router]);
+  }, [isAuthenticated, formState.username, router]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -53,8 +61,8 @@ export default function LoginComponent() {
               <input
                 type="username"
                 name="username"
-                value={username}
-                onChange={handleUsernameChange}
+                value={formState.username}
+                onChange={handleChange}
                 placeholder="Username"
                 className="input input-bordered"
                 required
@@ -67,8 +75,8 @@ export default function LoginComponent() {
               <input
                 type="password"
                 name="password"
-                value={password}
-                onChange={handlePasswordChange}
+                value={formState.password}
+                onChange={handleChange}
                 placeholder="Password"
                 className="input input-bordered"
                 required

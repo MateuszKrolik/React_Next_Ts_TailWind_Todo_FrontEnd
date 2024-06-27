@@ -1,7 +1,7 @@
 // @/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
-import { todoApi } from './api'; 
+import { todoApi } from './api';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +10,7 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(todoApi.middleware),
+  devTools: true,
 });
 
 export default store;
