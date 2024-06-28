@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import SuccessMessageComponent from '@/components/SuccessMessageComponent';
 import ErrorMessageComponent from '@/components/ErrorMessageComponent';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { loginAsync } from '@/redux/authSlice';
+import { todoApi } from '@/redux/api';
+import { authActions } from '@/redux/authSlice';
 
 export default function LoginComponent() {
   const router = useRouter();
@@ -16,9 +17,11 @@ export default function LoginComponent() {
     username: string;
     password: string;
   }>({
-    username: 'mateusz',
-    password: 'dummy',
+    username: '',
+    password: '',
   });
+
+  const [login, { isLoading }] = todoApi.useLoginMutation();
 
   const handleChange = ({
     target: { name, value },
@@ -28,11 +31,15 @@ export default function LoginComponent() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await dispatch(loginAsync(formState)).unwrap();
+      const response = await login(formState).unwrap();
+      dispatch(
+        authActions.setCredentials({
+          username: formState.username, 
+          token: response.token, 
+        })
+      );
     } catch (err) {
-      if (err instanceof Error) {
-        console.error(err.message);
-      }
+      dispatch(authActions.setLoginFailed());
     }
   };
 
@@ -83,7 +90,7 @@ export default function LoginComponent() {
               />
             </div>
             <div className="form-control mt-6">
-              <button type="submit" name="login" className="btn btn-primary">
+              <button disabled={isLoading} type="submit" name="login" className="btn btn-primary">
                 Login
               </button>
             </div>

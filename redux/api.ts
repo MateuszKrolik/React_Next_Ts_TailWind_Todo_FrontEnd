@@ -10,6 +10,16 @@ export interface Todo {
   done: boolean;
 }
 
+export interface UserResponse {
+  username: string
+  token: string
+}
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
 export const todoApi = createApi({
   reducerPath: 'todoApi',
   baseQuery: fetchBaseQuery({
@@ -18,7 +28,7 @@ export const todoApi = createApi({
       const token = (getState() as RootState).auth.token;
 
       if (token) {
-        headers.set('Authorization', `${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       } 
 
       return headers;
@@ -26,6 +36,13 @@ export const todoApi = createApi({
   }),
   tagTypes: ['Todos'],
   endpoints: (builder) => ({
+    login: builder.mutation<UserResponse, LoginRequest>({
+      query: (credentials) => ({
+        url: '/authenticate',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
     retrieveAllTodosForUsername: builder.query<Todo[], string>({
       query: (username) => `/v1/users/${username}/todos`,
       providesTags: [{ type: 'Todos', id: 'LIST' }],

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { todoApi } from './api';
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -32,6 +33,17 @@ const authSlice = createSlice({
       state.error = true;
     },
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      todoApi.endpoints.login.matchFulfilled,
+      (state, { payload }) => {
+        state.token = payload.token;
+        state.username = payload.username;
+        state.isAuthenticated = true;
+        state.error = false;
+      }
+    );
+  },
 });
 
 export const logoutAsync = createAsyncThunk(
@@ -41,35 +53,6 @@ export const logoutAsync = createAsyncThunk(
   }
 );
 
-export const loginAsync = createAsyncThunk(
-  'auth/loginAsync',
-  async (
-    { username, password }: { username: string; password: string },
-    { dispatch, rejectWithValue }
-  ) => {
-    const token = 'Basic ' + window.btoa(username + ':' + password);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/basicauth`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      if (response.ok) {
-        dispatch(authActions.setCredentials({ username, token }));
-      } else {
-        dispatch(authActions.setLoginFailed());
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
 
 export const authActions = authSlice.actions;
 
