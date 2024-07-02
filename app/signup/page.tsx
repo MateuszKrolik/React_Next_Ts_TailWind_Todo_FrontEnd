@@ -1,24 +1,32 @@
+// '@/app/signup/page.tsx'
 'use client';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/redux/hooks';
-import { todoApi } from '@/redux/api';
-import { authActions } from '@/redux/authSlice';
+import { todoApi, SignupResponse } from '@/redux/api';
 import { z } from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorAlert from '@/components/ErrorAlert';
 import Link from 'next/link';
 
-const schema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
-});
+interface ApiError {
+  data: SignupResponse;
+}
+
+const schema = z
+  .object({
+    username: z.string().min(1, 'Username is required'),
+    password: z.string().min(1, 'Password is required'),
+    confirmPassword: z.string().min(1, 'Confirm Password is required'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'], // attach error
+  });
 
 type FormFields = z.infer<typeof schema>;
 
-export default function LoginComponent() {
+export default function SignupComponent() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -28,21 +36,16 @@ export default function LoginComponent() {
     resolver: zodResolver(schema),
   });
 
-  const [login, { isLoading }] = todoApi.useLoginMutation();
+  const [signup, { isLoading }] = todoApi.useSignupMutation();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
-      const response = await login(data).unwrap();
-      dispatch(
-        authActions.setCredentials({
-          username: data.username,
-          token: response.token,
-        })
-      );
-      router.push(`/welcome/${data.username}`);
-    } catch (err) {
+      await signup(data).unwrap();
+      router.push('/login');
+    } catch (error) {
+      const apiError = error as ApiError;
       setError('root', {
-        message: 'Authentication failed! Check your credentials!',
+        message: apiError.data?.message,
       });
     }
   };
@@ -51,9 +54,11 @@ export default function LoginComponent() {
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col">
         <div className="text-center">
-          <h1 className="text-5xl font-bold">Login now!</h1>
+          <h1 className="text-5xl font-bold">SignUp now!</h1>
         </div>
-        {errors.root && <ErrorAlert message={errors.root.message} />}
+        {errors.root && (
+          <ErrorAlert data-testid="error-alert" message={errors.root.message} />
+        )}
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form onSubmit={handleSubmit(onSubmit)} className="card-body">
             <div className="form-control">
@@ -84,6 +89,22 @@ export default function LoginComponent() {
                 <div className="text-red-500">{errors.password.message}</div>
               )}
             </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Confirm Password</span>
+              </label>
+              <input
+                type="password"
+                {...register('confirmPassword')}
+                placeholder="Confirm Password"
+                className="input input-bordered"
+              />
+              {errors.confirmPassword && (
+                <div className="text-red-500">
+                  {errors.confirmPassword.message}
+                </div>
+              )}
+            </div>
             <div className="form-control mt-6">
               <button
                 disabled={isLoading}
@@ -91,12 +112,12 @@ export default function LoginComponent() {
                 name="login"
                 className="btn btn-primary"
               >
-                {isLoading ? 'Loading...' : 'Login'}
+                {isLoading ? 'Loading...' : 'SignUp'}
               </button>
             </div>
             <label className="label">
-              <Link href="/signup" className="label-text-alt link link-hover">
-                Don&apos;t have an account? Signup.
+              <Link href="/login" className="label-text-alt link link-hover">
+                Already have an Account? Login.
               </Link>
             </label>
           </form>

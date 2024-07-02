@@ -53,7 +53,7 @@ export default function AddTodoPage() {
         });
       }
     },
-    [addOneTodoForUsername, username, setError]
+    [addOneTodoForUsername, username, router, setError]
   );
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {

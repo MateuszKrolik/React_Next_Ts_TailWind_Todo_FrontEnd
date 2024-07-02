@@ -69,7 +69,7 @@ export default function TodoComponent({ params }: { params: { id: number } }) {
         });
       }
     },
-    [updateOneTodoForUsername, id, username, setError]
+    [updateOneTodoForUsername, router, id, username, setError]
   );
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {

@@ -64,7 +64,7 @@ export default function HeaderComponent() {
           </li>
           <li>
             {isAuthenticated && (
-              <Link href={`/welcome/${username}`}>Todos</Link>
+              <Link href={`/todos`}>Todos</Link>
             )}
           </li>
         </ul>
@@ -75,9 +75,14 @@ export default function HeaderComponent() {
             LogOut
           </button>
         ) : (
-          <Link href="/login" className="btn btn-ghost">
-            Login
-          </Link>
+          <>
+            <Link href="/login" className="btn btn-ghost">
+              Login
+            </Link>
+            <Link href="/signup" className="btn btn-ghost">
+              Signup
+            </Link>
+          </>
         )}
       </div>
     </div>

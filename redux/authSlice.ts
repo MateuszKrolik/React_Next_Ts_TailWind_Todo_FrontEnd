@@ -3,7 +3,6 @@ import { todoApi } from './api';
 
 const initialAuthState = {
   isAuthenticated: false,
-  error: false,
   username: '',
   token: '',
 };
@@ -21,16 +20,11 @@ const authSlice = createSlice({
       state.username = username;
       state.token = token;
       state.isAuthenticated = true;
-      state.error = false;
     },
     logout(state) {
       state.isAuthenticated = false;
       state.username = '';
       state.token = '';
-      state.error = false;
-    },
-    setLoginFailed(state) {
-      state.error = true;
     },
   },
   extraReducers: (builder) => {
@@ -40,7 +34,6 @@ const authSlice = createSlice({
         state.token = payload.token;
         state.username = payload.username;
         state.isAuthenticated = true;
-        state.error = false;
       }
     );
   },
@@ -52,7 +45,6 @@ export const logoutAsync = createAsyncThunk(
     dispatch(authActions.logout());
   }
 );
-
 
 export const authActions = authSlice.actions;
 

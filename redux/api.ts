@@ -11,13 +11,17 @@ export interface Todo {
 }
 
 export interface UserResponse {
-  username: string
-  token: string
+  username: string;
+  token: string;
 }
 
 export interface LoginRequest {
-  username: string
-  password: string
+  username: string;
+  password: string;
+}
+
+export interface SignupResponse {
+  message: string;
 }
 
 export const todoApi = createApi({
@@ -27,20 +31,31 @@ export const todoApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
 
+      headers.set('Content-Type', 'application/json');
+
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
-      } 
+      }
 
       return headers;
     },
   }),
-  tagTypes: ['Todos'],
+  tagTypes: ['User', 'Todos'],
   endpoints: (builder) => ({
-    login: builder.mutation<UserResponse, LoginRequest>({
+    signup: builder.mutation<SignupResponse, LoginRequest>({
       query: (credentials) => ({
-        url: '/authenticate',
+        url: '/v1/signup',
         method: 'POST',
         body: credentials,
+        invalidatesTags: [{ type: 'User' }],
+      }),
+    }),
+    login: builder.mutation<UserResponse, LoginRequest>({
+      query: (credentials) => ({
+        url: '/v1/login',
+        method: 'POST',
+        body: credentials,
+        invalidatesTags: [{ type: 'User' }],
       }),
     }),
     retrieveAllTodosForUsername: builder.query<Todo[], string>({
@@ -54,11 +69,11 @@ export const todoApi = createApi({
       query: ({ id, username }) => `/v1/users/${username}/todos/${id}`,
       providesTags: [{ type: 'Todos', id: 'LIST' }],
     }),
-    deleteOneTodoForUsername: builder.mutation<Todo, Todo>({
+    addOneTodoForUsername: builder.mutation<Todo, Todo>({
       query(todo) {
         return {
-          url: `/v1/users/${todo.username}/todos/${todo.id}`,
-          method: 'DELETE',
+          url: `/v1/users/${todo.username}/todos`,
+          method: 'POST',
           body: todo,
         };
       },
@@ -74,11 +89,11 @@ export const todoApi = createApi({
       },
       invalidatesTags: [{ type: 'Todos', id: 'LIST' }], // automatically re-run query and update page
     }),
-    addOneTodoForUsername: builder.mutation<Todo, Todo>({
+    deleteOneTodoForUsername: builder.mutation<Todo, Todo>({
       query(todo) {
         return {
-          url: `/v1/users/${todo.username}/todos`,
-          method: 'POST',
+          url: `/v1/users/${todo.username}/todos/${todo.id}`,
+          method: 'DELETE',
           body: todo,
         };
       },

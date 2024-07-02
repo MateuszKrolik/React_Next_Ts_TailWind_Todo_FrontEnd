@@ -1,6 +1,6 @@
 'use client';
 import { ReactNode } from 'react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/hooks';
 
 export default function AuthenticatedRoute({
@@ -8,10 +8,11 @@ export default function AuthenticatedRoute({
 }: {
   children: ReactNode;
 }) {
+  const router = useRouter();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   if (isAuthenticated) {
     return children;
   } else {
-    redirect('/login');
+    router.push('/login');
   }
 }

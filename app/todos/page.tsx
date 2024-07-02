@@ -29,7 +29,7 @@ export default function ListTodos() {
   const updateTodo = (todo: Todo) => {
     router.push(`/todo/${todo.id}`);
   };
-  
+
   function addNewTodo() {
     router.push(`/add-todo`);
   }
@@ -37,14 +37,14 @@ export default function ListTodos() {
   return (
     <AuthenticatedRoute>
       <div className="centered">
-        <h1>Things you want to do!</h1>
+        <h1 role="heading">Things you want to do!</h1>
         <div className="overflow-x-auto">
           {message && (
             <div role="alert" className="alert alert-warning">
               {message}
             </div>
           )}
-          <table className="table table-zebra">
+          <table role="table" className="table table-zebra">
             <thead>
               <tr>
                 <th>id</th>
@@ -83,7 +83,9 @@ export default function ListTodos() {
             </tbody>
           </table>
         </div>
-        <button onClick={addNewTodo} className="btn btn-secondary m-5">add new todo</button>
+        <button onClick={addNewTodo} className="btn btn-secondary m-5">
+          add new todo
+        </button>
       </div>
     </AuthenticatedRoute>
   );
