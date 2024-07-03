@@ -31,3 +31,7 @@ OLDDockerfile
 global.d.ts
 jest.confing.js
 jest.setup.js
+images/
+.github/
+LICENSE
+gcloud_custom.sh
